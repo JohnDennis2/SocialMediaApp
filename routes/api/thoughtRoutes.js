@@ -30,7 +30,11 @@ router.route('/thoughts/:thoughtId')
   .put(async (req, res) => {
     try {
       const updatedThought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, { new: true });
-      if (!updatedThought) return res.status(404).json({ error: 'Thought not found' });
+      if (!updatedThought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
       res.json(updatedThought);
     } catch (error) {
       res.status(400).json({ error: error.message });
+    }
+  });
