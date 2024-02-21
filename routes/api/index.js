@@ -1,8 +1,10 @@
-const router = require('express').Router();
-const appRoutes = require('./appRoutes');
-const userRoutes = require('./userRoutes');
+const express = require('express');
+const userController = require('./userController');
+const thoughtController = require('./thoughtController');
 
-router.use('/apps', appRoutes);
-router.use('/users', userRoutes);
+const router = express.Router();
 
-module.exports = router;
+router.get('/users', userController.getAllUsers);
+router.post('/users', userController.createUser);
+router.get('/users/:userId', userController.getUserById);
+router
