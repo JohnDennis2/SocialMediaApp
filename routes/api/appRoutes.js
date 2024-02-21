@@ -7,7 +7,7 @@ const {
   deleteApplication,
   addTag,
   removeTag,
-} = require('../../controllers/appController');
+} = require('../../controllers/thoughtController');
 
 // /api/applications
 router.route('/').get(getApplications).post(createApplication);

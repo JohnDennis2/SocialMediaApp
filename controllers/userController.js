@@ -1,52 +1,72 @@
-const { User, Application } = require('../models');
+const { User, Thought } = require('./models');
 
-module.exports = {
-  // Get all users
-  async getUsers(req, res) {
-    try {
-      const users = await User.find();
-      res.json(users);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-  // Get a single user
-  async getSingleUser(req, res) {
-    try {
-      const user = await User.findOne({ _id: req.params.userId })
-        .select('-__v');
+// Get all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
-      if (!user) {
-        return res.status(404).json({ message: 'No user with that ID' });
-      }
+// Get a single user by id
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId).populate('thoughts friends');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-  // create a new user
-  async createUser(req, res) {
-    try {
-      const user = await User.create(req.body);
-      res.json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
-  // Delete a user and associated apps
-  async deleteUser(req, res) {
-    try {
-      const user = await User.findOneAndDelete({ _id: req.params.userId });
+// Update a user by id
+exports.updateUserById = async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true });
+    if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
-      if (!user) {
-        return res.status(404).json({ message: 'No user with that ID' });
-      }
+// Delete a user by id
+exports.deleteUserById = async (req, res) => {
+  try {
+    const deletedUser = await User.findByIdAndDelete(req.params.userId);
+    if (!deletedUser) return res.status(404).json({ error: 'User not found' });
+    // Remove associated thoughts
+    await Thought.deleteMany({ _id: { $in: deletedUser.thoughts } });
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
-      await Application.deleteMany({ _id: { $in: user.applications } });
-      res.json({ message: 'User and associated apps deleted!' })
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
+// Add a friend to a user's friend list
+exports.addFriend = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    user.friends.push(req.params.friendId);
+    await user.save();
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Remove a friend from a user's friend list
+exports.removeFriend = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    user.friends.pull(req.params.friendId);
+    await user.save();
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
