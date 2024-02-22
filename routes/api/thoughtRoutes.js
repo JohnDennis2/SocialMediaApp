@@ -1,5 +1,8 @@
-router.route('/thoughts')
-  .get(async (req, res) => {
+const { Thought } = require("../../models");
+const router = require("express").Router();
+
+router
+  .get("/",async (req, res) => {
     try {
       const thoughts = await Thought.find();
       res.json(thoughts);
@@ -7,7 +10,10 @@ router.route('/thoughts')
       res.status(500).json({ error: 'Internal server error' });
     }
   })
-  .post(async (req, res) => {
+
+
+  //new route
+  router.post("/", async (req, res) => {
     try {
       const newThought = await Thought.create(req.body);
       await User.findByIdAndUpdate(newThought.userId, { $push: { thoughts: newThought._id } });
@@ -17,8 +23,8 @@ router.route('/thoughts')
     }
   });
 
-router.route('/thoughts/:thoughtId')
-  .get(async (req, res) => {
+router
+  .get("/:thoughtId" ,async (req, res) => {
     try {
       const thought = await Thought.findById(req.params.thoughtId);
       if (!thought) return res.status(404).json({ error: 'Thought not found' });
@@ -27,7 +33,7 @@ router.route('/thoughts/:thoughtId')
       res.status(500).json({ error: 'Internal server error' });
     }
   })
-  .put(async (req, res) => {
+  router.put(async (req, res) => {
     try {
       const updatedThought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, { new: true });
       if (!updatedThought) {

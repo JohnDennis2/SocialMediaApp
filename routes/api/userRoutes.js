@@ -1,20 +1,25 @@
-const express = require('express');
-const { User, Thought } = require('./models');
 
-// Create an Express router
-const router = express.Router();
+const { User, Thought } = require('../../models/');
 
-// Define routes for users
-router.route('/users')
-  .get(async (req, res) => {
+
+
+const router = require("express").Router();
+
+ //router.route("/").get(getAllUsers)
+// api/users/
+
+router.get("/", async (req, res) => {
     try {
+  
       const users = await User.find();
+
       res.json(users);
     } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json(error);
     }
   })
-  .post(async (req, res) => {
+
+router.post("/",async (req, res) => {
     try {
       const newUser = await User.create(req.body);
       res.status(201).json(newUser);
@@ -23,8 +28,8 @@ router.route('/users')
     }
   });
 
-router.route('/users/:userId')
-  .get(async (req, res) => {
+router
+  .get("/:userId", async (req, res) => {
     try {
       const user = await User.findById(req.params.userId).populate('thoughts friends');
       if (!user) return res.status(404).json({ error: 'User not found' });
@@ -33,29 +38,30 @@ router.route('/users/:userId')
       res.status(500).json({ error: 'Internal server error' });
     }
   })
-  .put(async (req, res) => {
+
+  router.put("/:userId" , async (req, res) => {
     try {
-      const updatedUser = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true });
+      const updatedUser = await User.findByIdAndUpdate({_id: req.params.userId}, {$set: req.body}, { new: true });
       if (!updatedUser) return res.status(404).json({ error: 'User not found' });
       res.json(updatedUser);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   })
-  .delete(async (req, res) => {
+
+  router
+  .delete("/:userId", async (req, res) => {
     try {
       const deletedUser = await User.findByIdAndDelete(req.params.userId);
       if (!deletedUser) return res.status(404).json({ error: 'User not found' });
-      // Bonus: Remove associated thoughts
-      await Thought.deleteMany({ _id: { $in: deletedUser.thoughts } });
-      res.sendStatus(204);
+      res.json(deletedUser)
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
 
-router.route('/users/:userId/friends/:friendId')
-  .post(async (req, res) => {
+router
+  .post("/:friendId", async (req, res) => {
     try {
       const user = await User.findById(req.params.userId);
       if (!user) return res.status(404).json({ error: 'User not found' });
@@ -66,7 +72,7 @@ router.route('/users/:userId/friends/:friendId')
       res.status(400).json({ error: error.message });
     }
   })
-  .delete(async (req, res) => {
+  router.delete("/:friendId", async (req, res) => {
     try {
       const user = await User.findById(req.params.userId);
       if (!user) return res.status(404).json({ error: 'User not found' });
@@ -77,3 +83,6 @@ router.route('/users/:userId/friends/:friendId')
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
+
+  module.exports = router
