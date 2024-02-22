@@ -33,7 +33,7 @@ router
       res.status(500).json({ error: 'Internal server error' });
     }
   })
-  router.put(async (req, res) => {
+  router.put("/:thoughtId", async (req, res) => {
     try {
       const updatedThought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, { new: true });
       if (!updatedThought) {
@@ -44,3 +44,5 @@ router
       res.status(400).json({ error: error.message });
     }
   });
+
+  module.exports = router

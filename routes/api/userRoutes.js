@@ -5,8 +5,6 @@ const { User, Thought } = require('../../models/');
 
 const router = require("express").Router();
 
- //router.route("/").get(getAllUsers)
-// api/users/
 
 router.get("/", async (req, res) => {
     try {
