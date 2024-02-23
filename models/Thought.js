@@ -17,7 +17,7 @@ const thoughtSchema = new Schema(
    createdAt:{
     type: Date,
     default: Date.now,
-    get: value => new Date
+    //get: value => dayjs(value).format("MM/DD/YYYY")
     // getter formats default data in a way we choose
    },
    reactions: [reactionSchema]

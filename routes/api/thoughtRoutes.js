@@ -1,4 +1,4 @@
-const { Thought } = require("../../models");
+const { Thought, User } = require("../../models");
 const router = require("express").Router();
 
 router
@@ -33,6 +33,7 @@ router
       res.status(500).json({ error: 'Internal server error' });
     }
   })
+
   router.put("/:thoughtId", async (req, res) => {
     try {
       const updatedThought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, { new: true });
@@ -45,4 +46,35 @@ router
     }
   });
 
+  router.delete("/:thoughtId", async (req, res) => {
+    try {
+      const updatedThought = await Thought.findByIdAndDelete(req.params.thoughtId,{ new: true });
+      if (!updatedThought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
+      res.json(updatedThought);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  router.post("/:thoughtId/reactions", async (req, res) => {
+    try {
+      const newThought = await Thought.findByIdAndUpdate({_id: req.params.thoughtId}, {$push: {reactions: req.body}}, {new:true});
+      
+      res.status(201).json(newThought);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  router.delete("/:thoughtId/reactions/:reactionId", async (req, res) => {
+    try {
+      const newThought = await Thought.findByIdAndUpdate({_id: req.params.thoughtId}, {$pull: {reactions: {reactionId: req.params.reactionId}}}, {new:true});
+      
+      res.status(201).json(newThought);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
   module.exports = router

@@ -59,22 +59,22 @@ router
   });
 
 router
-  .post("/:friendId", async (req, res) => {
+  .post("/:userId/friends/:friendId", async (req, res) => {
     try {
-      const user = await User.findById(req.params.userId);
-      if (!user) return res.status(404).json({ error: 'User not found' });
-      user.friends.push(req.params.friendId);
-      await user.save();
+      const user = await User.findOneAndUpdate({_id: req.params.userId}, {$push: {friends: req.params.friendId}}, {new: true});
+      // if (!user) return res.status(404).json({ error: 'User not found' });
+      // user.friends.push(req.params.friendId);
+      // await user.save();
       res.json(user);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   })
-  router.delete("/:friendId", async (req, res) => {
+  router.delete("/:userId/friends/:friendId", async (req, res) => {
     try {
-      const user = await User.findById(req.params.userId);
-      if (!user) return res.status(404).json({ error: 'User not found' });
-      user.friends.pull(req.params.friendId);
+      const user = await User.findOneAndUpdate({_id: req.params.userId}, {$pull: {friends: req.params.friendId}}, {new: true});
+      // if (!user) return res.status(404).json({ error: 'User not found' });
+      // user.friends.pull(req.params.friendId);
       await user.save();
       res.json(user);
     } catch (error) {
