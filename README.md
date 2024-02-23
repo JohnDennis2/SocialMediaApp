@@ -7,6 +7,7 @@
 3. [Useage](https://github.com/johndennis2/socialmediaapp/blob/main/README.md###Useage)
 4. [Authors](https://github.com/johndennis2/socialmediaapp/blob/main/README.md###Authors)
 5. [Screenshot](https://github.com/johndennis2/socialmediaapp/blob/main/README.md###Screenshot)
+6. [Video](https://github.com/johndennis2/socialmediaapp/blob/main/README.md###Video)
 
 ### Description
 
@@ -33,5 +34,9 @@ John Dennis is a junior developer.  To learn more about him visit his Git Hub at
 
 ![screenshot1](./Screenshot1SMA.png)
 ![screenshot1](./Screenshot2SMA.png)
+
+### Video
+
+https://watch.screencastify.com/v/pnIcNqPV135R0UbjCB2X
 
 
