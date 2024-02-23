@@ -31,4 +31,7 @@ John Dennis is a junior developer.  To learn more about him visit his Git Hub at
 
 ### Screenshot
 
+![screenshot1](./Screenshot1SMA.png)
+![screenshot1](./Screenshot2SMA.png)
+
 
